@@ -12,6 +12,10 @@ import retrofit2.http.Query
  */
 interface AptService : BaseService {
 
+    /**
+     * warn:only 50 per request every day!!!
+     * The function of regular refresh is not implemented,if must,can use WorkManager
+     */
     @GET("onebox/exchange/currency")
     suspend fun UsdConverterToCny(
         @Query("from") from: String,

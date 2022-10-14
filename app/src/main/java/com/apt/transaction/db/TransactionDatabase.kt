@@ -17,8 +17,8 @@ abstract class TransactionDatabase : RoomDatabase() {
 
     companion object {
         private var instance: TransactionDatabase? = null
-        fun getInstance(context: Context): TransactionDatabase {
-            return instance ?: synchronized(TransactionDatabase::class.java) {
+        fun getInstance(context: Context) =
+            instance ?: synchronized(TransactionDatabase::class.java) {
                 instance ?: Room.databaseBuilder(
                     context.applicationContext,
                     TransactionDatabase::class.java,
@@ -27,7 +27,6 @@ abstract class TransactionDatabase : RoomDatabase() {
                     instance = it
                 }
             }
-        }
     }
 
 

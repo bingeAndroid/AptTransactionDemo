@@ -3,6 +3,7 @@ package com.apt.transaction
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.apt.transaction.utils.DataUtils
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -20,6 +21,7 @@ class AptApp : Application() {
     override fun onCreate() {
         super.onCreate()
         mContext = applicationContext
+        DataUtils.getInstance().init(this,"Apt_Data")
     }
 
 }

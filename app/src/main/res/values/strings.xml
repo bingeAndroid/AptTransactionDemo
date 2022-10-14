@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">APTTransactionDemo</string>
-    <string name="usd_amount">USD: %.2f</string>
-    <string name="cny_amount">CNY: %.2f</string>
+    <string name="usd_amount">USD: $%.2f</string>
+    <string name="cny_amount">CNY: ￥%.2f</string>
 </resources>

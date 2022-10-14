@@ -2,6 +2,7 @@ package com.apt.transaction.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.apt.transaction.DEFAULT_MAX_PAGE_SIZE
 import com.apt.transaction.db.TransactionDatabase
 import com.apt.transaction.entity.AptTransaction
 
@@ -34,7 +35,7 @@ class DbUtils {
 
     suspend fun getTransactionListFromDb(
         pageIndex: Int = 1,
-        pageSize: Int = 10
+        pageSize: Int = DEFAULT_MAX_PAGE_SIZE
     ): List<AptTransaction> = mDao.queryTransactionByPage(pageIndex, pageSize)
 
     suspend fun saveTransactionListIntoDb(transactionList: List<AptTransaction>) {

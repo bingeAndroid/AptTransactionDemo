@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.apt.transaction.DEFAULT_MAX_PAGE_SIZE
 import com.apt.transaction.base.BaseViewModel
 import com.apt.transaction.entity.AptTransaction
 import com.apt.transaction.paging.TransactionPagingSource
@@ -24,7 +25,7 @@ class MainViewModel: BaseViewModel() {
     val mUpdateNamePositionLiveData: MutableLiveData<Int> = MutableLiveData()
 
     companion object {
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = DEFAULT_MAX_PAGE_SIZE
         const val PREFETCH_DISTANCE = 3
     }
 
@@ -33,7 +34,6 @@ class MainViewModel: BaseViewModel() {
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,
             prefetchDistance = PREFETCH_DISTANCE,
-            initialLoadSize = 10
         ),
         pagingSourceFactory = { TransactionPagingSource(context, PAGE_SIZE) })
         .flow

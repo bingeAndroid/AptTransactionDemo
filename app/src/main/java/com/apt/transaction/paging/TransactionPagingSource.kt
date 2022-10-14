@@ -9,10 +9,14 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.apt.transaction.DEFAULT_MAX_PAGE_SIZE
+import com.apt.transaction.DEFAULT_USD_AMOUNT
 import com.apt.transaction.api.AptService
 import com.apt.transaction.api.RetrofitManager
 import com.apt.transaction.entity.AptTransaction
 import com.apt.transaction.extend.retainTwoDecimalPlaces
+import com.apt.transaction.utils.APT_EXCHANGE_KEY
+import com.apt.transaction.utils.DataUtils
 import com.apt.transaction.utils.DbUtils
 import com.apt.transaction.utils.LogUtils
 import kotlinx.coroutines.flow.Flow
@@ -23,10 +27,8 @@ import kotlinx.coroutines.flow.map
  * @author Jiabin Lin
  * @date 2022/10/13
  */
-
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
-class TransactionPagingSource(private val context: Context, private val pageSize: Int = 10) :
+const val MAX_PAGE_INDEX = 5
+class TransactionPagingSource(private val context: Context, private val pageSize: Int = DEFAULT_MAX_PAGE_SIZE) :
     PagingSource<Int, AptTransaction>() {
 
     override fun getRefreshKey(state: PagingState<Int, AptTransaction>): Int? = null
@@ -37,7 +39,7 @@ class TransactionPagingSource(private val context: Context, private val pageSize
         return LoadResult.Page(
             data = mockResponseTransactionList(start),
             prevKey = if (start > 1) start - 1 else null,
-            nextKey = if (start > 5) null else start + 1
+            nextKey = if (start > MAX_PAGE_INDEX) null else start + 1
         )
     }
 
@@ -55,19 +57,14 @@ class TransactionPagingSource(private val context: Context, private val pageSize
         if (usdConverterToCny.error_code == 0 && usdConverterToCny.result.isNotEmpty()) {
             var exchange = usdConverterToCny.result[0].exchange
             for (transaction in mockTransactionList) {
-                val EXCHANGE_KEY = stringPreferencesKey("exchange_key")
                 if (exchange.isBlank()) {
                     //if exchange is blank,get it from dataStore,default value is 7.0
-                    exchange = context.dataStore.data.map { preferences ->
-                        preferences[EXCHANGE_KEY] ?: "7.0"
-                    }.first()
+                    exchange = DataUtils.getInstance().getString(APT_EXCHANGE_KEY, "7.0")
                 }
                 LogUtils.i(msg = "exchange is == $exchange")
-                if (transaction.usdAmount != -1.0) {
+                if (transaction.usdAmount != DEFAULT_USD_AMOUNT) {
                     //save exchange into dataStore prevent request api fail
-                    context.dataStore.edit { settings ->
-                        settings[EXCHANGE_KEY] = exchange
-                    }
+                    DataUtils.getInstance().putString(APT_EXCHANGE_KEY, exchange)
                     transaction.usdAmount =
                         (exchange.toDouble() * transaction.cnyAmount).retainTwoDecimalPlaces
                 }
@@ -79,12 +76,12 @@ class TransactionPagingSource(private val context: Context, private val pageSize
     private suspend fun randomMockTransactionList(pageIndex: Int): List<AptTransaction> {
         LogUtils.i(msg = "request pageIndex is $pageIndex")
         val transactionList = mutableListOf<AptTransaction>()
-        for (i in ((pageIndex - 1) * pageSize + 1)..((pageIndex - 1) * pageSize + 10)) {
+        for (i in ((pageIndex - 1) * pageSize + 1)..((pageIndex - 1) * pageSize + DEFAULT_MAX_PAGE_SIZE)) {
             transactionList.add(
                 AptTransaction(
                     name = "Transaction $i",
                     cnyAmount = (Math.random() * 100).retainTwoDecimalPlaces,
-                    usdAmount = if (i % 3 == 0) (Math.random() * 1000).retainTwoDecimalPlaces else -1.0
+                    usdAmount = if (i % 3 == 0) (Math.random() * 1000).retainTwoDecimalPlaces else DEFAULT_USD_AMOUNT
                 )
             )
         }
