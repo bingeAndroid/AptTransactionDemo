@@ -1,0 +1,74 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id "com.google.dagger.hilt.android"
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId rootProject.ext.android.applicationId
+        minSdk rootProject.ext.android.minSdk
+        targetSdk rootProject.ext.android.targetSdk
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
+    }
+
+}
+
+dependencies {
+
+    implementation rootProject.ext.dependencies["core"]
+    implementation rootProject.ext.dependencies["appcompat"]
+    implementation rootProject.ext.dependencies["material"]
+    implementation rootProject.ext.dependencies["constraintlayout"]
+
+    implementation rootProject.ext.dependencies["recyclerview"]
+    implementation rootProject.ext.dependencies["card"]
+    implementation rootProject.ext.dependencies["swiperefresh"]
+    implementation rootProject.ext.dependencies["viewmodel"]
+    implementation rootProject.ext.dependencies["livedata"]
+    implementation rootProject.ext.dependencies["room-ktx"]
+    implementation rootProject.ext.dependencies["room-runtime"]
+    kapt rootProject.ext.dependencies["room-compiler"]
+    implementation rootProject.ext.dependencies["paging-common-ktx"]
+    implementation rootProject.ext.dependencies["paging-runtime-ktx"]
+    implementation rootProject.ext.dependencies["fragment-ktx"]
+    implementation rootProject.ext.dependencies["okhttp-logging"]
+    implementation rootProject.ext.dependencies["retrofit"]
+    implementation rootProject.ext.dependencies["moshi"]
+    implementation rootProject.ext.dependencies["moshi-converter"]
+    implementation rootProject.ext.dependencies["datastore"]
+    implementation rootProject.ext.dependencies["hilt"]
+    kapt rootProject.ext.dependencies["hilt-compiler"]
+
+    testImplementation rootProject.ext.dependencies["junit"]
+    androidTestImplementation rootProject.ext.dependencies["testjunit"]
+    androidTestImplementation rootProject.ext.dependencies["espresso"]
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
